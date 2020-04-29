@@ -3,7 +3,9 @@ var path = require("path");
 var logger = require("morgan");
 var bodyParser = require("body-parser");
 
-var neo4j = require("neo4j-driver");
+const neo4j = require('neo4j-driver');
+const driver = neo4j.driver('bolt://localhost', neo4j.auth.basic('neo4j', 'eslam123'));
+const session = driver.session()
 var app = express();
 
 // View Engine
@@ -16,12 +18,18 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended:false}));
 app.use(express.static(path.join(__dirname, 'public')));
 
-var driver = neo4j.driver('bolt://localhost', )
-
-app.listen(3000);
-console.log("Server Started on Port 3000....");
+app.listen(5000);
+console.log("Server Started on Port 5000....");
 
 app.get("/", (req, res)=>{
+    session.run('MATCH(n:Movie) RETURN n LIMIT 25')
+    .then(function(res){
+        res.records.forEach(function(record){
+            console.log(record._fields[0].properties);
+        });
+    }).catch((err) =>{
+        console.log(err);
+    })
     res.send("Helllllo")
 })
 module.exports = app;
