@@ -18,8 +18,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended:false}));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.listen(3001);
-console.log("Server Started on Port 5000....");
+app.listen(8080, () => {
+    console.log("Hello The Server is Working now");
+});
 
 app.get("/", (req, res, next)=>{
     session.run('MATCH(n:Movie) RETURN n LIMIT 25')
@@ -42,5 +43,16 @@ app.get("/persons", (req, res)=>{
         console.log(err);
     })
     res.send("Persons Data")
+});
+app.get("/all", (req, res)=>{
+    session.run('MATCH(n) RETURN n LIMIT 25')
+    .then(function(myResult){
+        myResult.records.forEach(function(record){
+            console.log(record._fields[0].properties);
+        });
+    }).catch((err) =>{
+        console.log(err);
+    })
+    res.send("Movies And Actors")
 })
 module.exports = app;
