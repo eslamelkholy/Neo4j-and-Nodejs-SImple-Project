@@ -18,10 +18,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended:false}));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.listen(5000);
+app.listen(3001);
 console.log("Server Started on Port 5000....");
 
-app.get("/", (req, res)=>{
+app.get("/", (req, res, next)=>{
     session.run('MATCH(n:Movie) RETURN n LIMIT 25')
     .then(function(res){
         res.records.forEach(function(record){
@@ -30,6 +30,17 @@ app.get("/", (req, res)=>{
     }).catch((err) =>{
         console.log(err);
     })
-    res.send("Helllllo")
+    res.send("Movies Data");
+})
+app.get("/persons", (req, res)=>{
+    session.run('MATCH(n:Person) RETURN n LIMIT 25')
+    .then(function(myResult){
+        myResult.records.forEach(function(record){
+            console.log(record._fields[0].properties);
+        });
+    }).catch((err) =>{
+        console.log(err);
+    })
+    res.send("Persons Data")
 })
 module.exports = app;
